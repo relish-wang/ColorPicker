@@ -13,6 +13,10 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+/**
+ * @author Relish Wang
+ * @since 2017/3/22
+ */
 public class ColorPickerView extends AppCompatImageView {
     private Bitmap iconBitMap;
     float iconRadius;// 吸管圆的半径

@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 /**
- * Created by Relish on 2017/3/22.
+ * @author Relish Wang
+ * @since 2017/3/22
  */
-
 public class ColorPickerDialog extends DialogFragment implements ColorPickerView.OnColorSelectedChangedListener {
 
     private static final String RED = "red";
