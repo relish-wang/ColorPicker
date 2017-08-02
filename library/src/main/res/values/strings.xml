@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Library</string>
+    <string name="press_color_to_apply">点击应用颜色</string>
 </resources>
