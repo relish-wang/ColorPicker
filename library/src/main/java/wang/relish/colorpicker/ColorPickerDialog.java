@@ -48,7 +48,6 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
 
     public ColorPickerDialog(Context context, int initialColor) {
         super(context);
-
         init(initialColor);
     }
 
@@ -66,13 +65,9 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     }
 
     private void setUp(int color) {
-
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         @SuppressLint("InflateParams") View layout = inflater.inflate(R.layout.dialog_color_picker, null);
-
         setContentView(layout);
-
         setTitle("取色器");
 
         mColorPicker = layout.findViewById(R.id.color_picker_view);
@@ -107,20 +102,17 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
                 return false;
             }
         });
-
         ((LinearLayout) mOldColor.getParent()).setPadding(
                 Math.round(mColorPicker.getDrawingOffset()),
                 0,
                 Math.round(mColorPicker.getDrawingOffset()),
                 0
         );
-
         mOldColor.setOnClickListener(this);
         mNewColor.setOnClickListener(this);
         mColorPicker.setOnColorChangedListener(this);
         mOldColor.setColor(color);
         mColorPicker.setColor(color, true);
-
     }
 
     @Override
