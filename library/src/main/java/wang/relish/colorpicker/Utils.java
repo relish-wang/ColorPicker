@@ -16,7 +16,7 @@ class Utils {
      * @param color 16进制颜色
      * @return ARGB颜色
      */
-    public static String convertToARGB(int color) {
+    static String convertToARGB(int color) {
         String rgb = convertToRGB(color);
         String alpha = Integer.toHexString(Color.alpha(color));
         if (alpha.length() == 1) alpha = "0" + alpha;
@@ -30,7 +30,7 @@ class Utils {
      * @param color 16进制颜色
      * @return RGB颜色(无透明度值)
      */
-    public static String convertToRGB(int color) {
+    static String convertToRGB(int color) {
         String red = Integer.toHexString(Color.red(color));
         String green = Integer.toHexString(Color.green(color));
         String blue = Integer.toHexString(Color.blue(color));
@@ -47,7 +47,7 @@ class Utils {
      * @return 16进制颜色
      * @throws NumberFormatException 当{@param argb}不是一个正确的颜色格式的字符串时
      */
-    public static int convertToColorInt(@NonNull String argb) throws IllegalArgumentException {
+    static int convertToColorInt(@NonNull String argb) throws IllegalArgumentException {
         if (!argb.startsWith("#")) {
             argb = "#" + argb;
         }

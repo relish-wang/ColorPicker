@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private int mColor = Color.parseColor("#FFFFFF");
     /**
-     * 是否启用16进制值颜色
+     * 是否显示颜色数值（16进制）
      */
     private boolean mHexValueEnable = true;
     /**
