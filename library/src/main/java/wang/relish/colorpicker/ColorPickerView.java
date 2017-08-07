@@ -304,10 +304,10 @@ public class ColorPickerView extends View {
 
         float[] hsv = new float[]{mHue, mSat, mVal};//hsv数组
         int color = Color.HSVToColor(hsv);
-        int acolor = Color.HSVToColor(0, hsv);
+        int aColor = Color.HSVToColor(0, hsv);
         //初始化透明度线性渲染器
         mAlphaShader = new LinearGradient(rect.left, rect.top, rect.right, rect.top,
-                color, acolor, TileMode.CLAMP);
+                color, aColor, TileMode.CLAMP);
 
         mAlphaPaint.setShader(mAlphaShader);
 

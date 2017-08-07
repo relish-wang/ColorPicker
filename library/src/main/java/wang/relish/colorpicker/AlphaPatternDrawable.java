@@ -50,12 +50,12 @@ public class AlphaPatternDrawable extends Drawable {
 
     @Override
     public void setAlpha(int alpha) {
-        throw new UnsupportedOperationException("无法设置Alpha值！");
+        throw new UnsupportedOperationException("不允许设置Alpha值！");
     }
 
     @Override
     public void setColorFilter(ColorFilter cf) {
-        throw new UnsupportedOperationException("无法设置ColorFilter！");
+        throw new UnsupportedOperationException("不允许设置ColorFilter！");
     }
 
     @Override
