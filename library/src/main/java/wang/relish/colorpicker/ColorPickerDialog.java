@@ -137,30 +137,12 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     }
 
     private void updateHexLengthFilter() {
-        mHexVal.setFilters(new InputFilter[]{
-                new InputFilter.LengthFilter(getAlphaSliderVisible() ? 9 : 7)
-        });
+        mHexVal.setFilters(new InputFilter[]{new InputFilter.LengthFilter(7)});
     }
 
     private void updateHexValue(int color) {
-        if (getAlphaSliderVisible()) {
-            mHexVal.setText(Utils.convertToARGB(color).toUpperCase(Locale.getDefault()));
-        } else {
-            mHexVal.setText(Utils.convertToRGB(color).toUpperCase(Locale.getDefault()));
-        }
+        mHexVal.setText(Utils.convertToRGB(color).toUpperCase(Locale.getDefault()));
         mHexVal.setTextColor(mHexDefaultTextColor);
-    }
-
-    public void setAlphaSliderVisible(boolean visible) {
-        mColorPicker.setAlphaSliderVisible(visible);
-        if (mHexValueEnabled) {
-            updateHexLengthFilter();
-            updateHexValue(getColor());
-        }
-    }
-
-    public boolean getAlphaSliderVisible() {
-        return mColorPicker.getAlphaSliderVisible();
     }
 
     /**

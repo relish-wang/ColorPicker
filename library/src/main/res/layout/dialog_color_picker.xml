@@ -37,8 +37,8 @@
             android:imeOptions="actionDone"
             android:inputType="textCapCharacters"
             android:maxLength="7"
-            android:visibility="gone"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout

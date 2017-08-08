@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private View mViewColor;
-    private SwitchCompat mStHexEnable, mStAlphaEnable;
+    private SwitchCompat mStHexEnable;
 
     /**
      * 选择的颜色
@@ -29,10 +29,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 是否显示颜色数值（16进制）
      */
     private boolean mHexValueEnable = true;
-    /**
-     * 是否启用透明度
-     */
-    private boolean mAlphaSliderVisible = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +36,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         mStHexEnable = (SwitchCompat) findViewById(R.id.st_hex_enable);
-        mStAlphaEnable = (SwitchCompat) findViewById(R.id.st_alpha_enable);
 
         mStHexEnable.setChecked(mHexValueEnable);
-        mStAlphaEnable.setChecked(mAlphaSliderVisible);
 
         mStHexEnable.setOnCheckedChangeListener(this);
-        mStAlphaEnable.setOnCheckedChangeListener(this);
 
         mViewColor = findViewById(R.id.view_color);
         mViewColor.setOnClickListener(this);
@@ -57,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.view_color:
                 ColorPickerDialog dialog = new ColorPickerDialog(MainActivity.this, mColor);
-                dialog.setAlphaSliderVisible(mAlphaSliderVisible);
                 dialog.setHexValueEnabled(mHexValueEnable);
                 dialog.setOnColorChangedListener(MainActivity.this);
                 dialog.show();
@@ -73,10 +65,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        if (compoundButton == mStAlphaEnable) {
-            mAlphaSliderVisible = b;
-        } else if (compoundButton == mStHexEnable) {
-            mHexValueEnable = b;
-        }
+        mHexValueEnable = b;
     }
 }

@@ -56,25 +56,4 @@
             android:layout_gravity="center_vertical"
             android:padding="16dp" />
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="8dp"
-            android:text="启用透明值" />
-
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/st_alpha_enable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="16dp" />
-    </LinearLayout>
 </LinearLayout>

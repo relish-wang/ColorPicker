@@ -20,8 +20,6 @@ public class ColorPickerPanelView extends View {
      */
     private final static float BORDER_WIDTH_PX = 1;
 
-    private float mDensity = 1f;
-
     private int mBorderColor = 0xff6E6E6E;
     private int mColor = 0xff000000;
 
@@ -30,8 +28,6 @@ public class ColorPickerPanelView extends View {
 
     private RectF mDrawingRect;
     private RectF mColorRect;
-
-    private AlphaPatternDrawable mAlphaPattern;
 
 
     public ColorPickerPanelView(Context context) {
@@ -50,7 +46,6 @@ public class ColorPickerPanelView extends View {
     private void init() {
         mBorderPaint = new Paint();
         mColorPaint = new Paint();
-        mDensity = getContext().getResources().getDisplayMetrics().density;
     }
 
 
@@ -60,8 +55,6 @@ public class ColorPickerPanelView extends View {
 
         mBorderPaint.setColor(mBorderColor);
         canvas.drawRect(mDrawingRect, mBorderPaint);
-
-        if (mAlphaPattern != null) mAlphaPattern.draw(canvas);
 
         mColorPaint.setColor(mColor);
 
@@ -100,16 +93,6 @@ public class ColorPickerPanelView extends View {
         float right = dRect.right - BORDER_WIDTH_PX;
 
         mColorRect = new RectF(left, top, right, bottom);
-
-        mAlphaPattern = new AlphaPatternDrawable((int) (5 * mDensity));
-
-        mAlphaPattern.setBounds(
-                Math.round(mColorRect.left),
-                Math.round(mColorRect.top),
-                Math.round(mColorRect.right),
-                Math.round(mColorRect.bottom)
-        );
-
     }
 
     /**

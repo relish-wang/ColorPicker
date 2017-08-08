@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.ComposeShader;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
@@ -19,8 +18,6 @@ import android.view.View;
 
 /**
  * 取色器
- * <p>
- * 可以通过{@link #setAlphaSliderVisible(boolean)}方法设置启用透明度
  *
  * @author Relish Wang
  * @since 2017/08/02
@@ -29,7 +26,6 @@ public class ColorPickerView extends View {
 
     private final static int PANEL_SAT_VAL = 0;
     private final static int PANEL_HUE = 1;
-    private final static int PANEL_ALPHA = 2;
 
     /**
      * 用于显示颜色的面板的边框粗细（单位：px）
@@ -40,10 +36,6 @@ public class ColorPickerView extends View {
      * 色调面板的宽度（单位：dp）
      */
     private float HUE_PANEL_WIDTH = 30f;
-    /**
-     * 透明度面板的高度（单位：dp）
-     */
-    private float ALPHA_PANEL_HEIGHT = 20f;
     /**
      * 不同颜色面板间的间距（单位：dp）
      */
@@ -67,25 +59,18 @@ public class ColorPickerView extends View {
     private Paint mHuePaint;
     private Paint mHueTrackerPaint;
 
-    private Paint mAlphaPaint;
-    private Paint mAlphaTextPaint;
-
     private Paint mBorderPaint;
 
     private Shader mValShader;
     private Shader mSatShader;
     private Shader mHueShader;
-    private Shader mAlphaShader;
 
-    private int mAlpha = 0xff;
     private float mHue = 360f;
     private float mSat = 0f;
     private float mVal = 0f;
 
-    private String mAlphaSliderText = "";
     private int mSliderTrackerColor = 0xff1c1c1c;
     private int mBorderColor = 0xff6E6E6E;
-    private boolean mShowAlphaPanel = false;
 
     /**
      * 记录上一次被点击的颜色板
@@ -97,18 +82,10 @@ public class ColorPickerView extends View {
      */
     private float mDrawingOffset;
 
-
-    /*
-     * Distance form the edges of the view
-     * of where we are allowed to draw.
-     */
     private RectF mDrawingRect;
 
     private RectF mSatValRect;
     private RectF mHueRect;
-    private RectF mAlphaRect;
-
-    private AlphaPatternDrawable mAlphaPattern;
 
     private Point mStartTouchPoint = null;
 
@@ -134,7 +111,6 @@ public class ColorPickerView extends View {
         PALETTE_CIRCLE_TRACKER_RADIUS *= mDensity;
         RECTANGLE_TRACKER_OFFSET *= mDensity;
         HUE_PANEL_WIDTH *= mDensity;
-        ALPHA_PANEL_HEIGHT *= mDensity;
         PANEL_SPACING = PANEL_SPACING * mDensity;
 
         mDrawingOffset = calculateRequiredOffset();//计算所需位移
@@ -152,8 +128,6 @@ public class ColorPickerView extends View {
         mSatValTrackerPaint = new Paint();
         mHuePaint = new Paint();
         mHueTrackerPaint = new Paint();
-        mAlphaPaint = new Paint();
-        mAlphaTextPaint = new Paint();
         mBorderPaint = new Paint();
 
 
@@ -165,14 +139,6 @@ public class ColorPickerView extends View {
         mHueTrackerPaint.setStyle(Style.STROKE);
         mHueTrackerPaint.setStrokeWidth(2f * mDensity);
         mHueTrackerPaint.setAntiAlias(true);
-
-        mAlphaTextPaint.setColor(0xff1c1c1c);
-        mAlphaTextPaint.setTextSize(14f * mDensity);
-        mAlphaTextPaint.setAntiAlias(true);
-        mAlphaTextPaint.setTextAlign(Align.CENTER);
-        mAlphaTextPaint.setFakeBoldText(true);
-
-
     }
 
     private float calculateRequiredOffset() {
@@ -202,8 +168,6 @@ public class ColorPickerView extends View {
 
         drawSatValPanel(canvas);//绘制饱和度选择区域
         drawHuePanel(canvas);//绘制右侧色相选择区域
-        drawAlphaPanel(canvas);//绘制底部透明度选择区域
-
     }
 
     /**
@@ -215,10 +179,8 @@ public class ColorPickerView extends View {
 
         final RectF rect = mSatValRect;
 
-        if (BORDER_WIDTH_PX > 0) {
-            mBorderPaint.setColor(mBorderColor);
-            canvas.drawRect(mDrawingRect.left, mDrawingRect.top, rect.right + BORDER_WIDTH_PX, rect.bottom + BORDER_WIDTH_PX, mBorderPaint);
-        }
+        mBorderPaint.setColor(mBorderColor);
+        canvas.drawRect(mDrawingRect.left, mDrawingRect.top, rect.right + BORDER_WIDTH_PX, rect.bottom + BORDER_WIDTH_PX, mBorderPaint);
         //明度线性渲染器
         if (mValShader == null) {
             mValShader = new LinearGradient(rect.left, rect.top, rect.left, rect.bottom,
@@ -283,53 +245,6 @@ public class ColorPickerView extends View {
 
     }
 
-    /**
-     * 绘制底部透明度选择区域
-     *
-     * @param canvas 画布
-     */
-    private void drawAlphaPanel(Canvas canvas) {
-        if (!mShowAlphaPanel || mAlphaRect == null || mAlphaPattern == null) return;
-
-        final RectF rect = mAlphaRect;
-
-        mBorderPaint.setColor(mBorderColor);
-        canvas.drawRect(rect.left - BORDER_WIDTH_PX,
-                rect.top - BORDER_WIDTH_PX,
-                rect.right + BORDER_WIDTH_PX,
-                rect.bottom + BORDER_WIDTH_PX,
-                mBorderPaint);
-
-        mAlphaPattern.draw(canvas);
-
-        float[] hsv = new float[]{mHue, mSat, mVal};//hsv数组
-        int color = Color.HSVToColor(hsv);
-        int aColor = Color.HSVToColor(0, hsv);
-        //初始化透明度线性渲染器
-        mAlphaShader = new LinearGradient(rect.left, rect.top, rect.right, rect.top,
-                color, aColor, TileMode.CLAMP);
-
-        mAlphaPaint.setShader(mAlphaShader);
-
-        canvas.drawRect(rect, mAlphaPaint);
-
-        if (mAlphaSliderText != null && mAlphaSliderText != "") {
-            canvas.drawText(mAlphaSliderText, rect.centerX(), rect.centerY() + 4 * mDensity, mAlphaTextPaint);
-        }
-
-        float rectWidth = 4 * mDensity / 2;
-        //初始化透明度选择器选择条位置
-        Point p = alphaToPoint(mAlpha);
-
-        RectF r = new RectF();
-        r.left = p.x - rectWidth;
-        r.right = p.x + rectWidth;
-        r.top = rect.top - RECTANGLE_TRACKER_OFFSET;
-        r.bottom = rect.bottom + RECTANGLE_TRACKER_OFFSET;
-
-        canvas.drawRoundRect(r, 2, 2, mHueTrackerPaint);
-    }
-
     private Point hueToPoint(float hue) {
         final RectF rect = mHueRect;
         final float height = rect.height();
@@ -348,16 +263,6 @@ public class ColorPickerView extends View {
         Point p = new Point();
         p.x = (int) (sat * width + rect.left);
         p.y = (int) ((1f - val) * height + rect.top);
-        return p;
-    }
-
-    private Point alphaToPoint(int alpha) {
-        final RectF rect = mAlphaRect;
-        final float width = rect.width();
-
-        Point p = new Point();
-        p.x = (int) (width - (alpha * width / 0xff) + rect.left);
-        p.y = (int) rect.top;
         return p;
     }
 
@@ -401,20 +306,6 @@ public class ColorPickerView extends View {
         return 360f - (y * 360f / height);
     }
 
-    private int pointToAlpha(int x) {
-        final RectF rect = mAlphaRect;
-        final int width = (int) rect.width();
-        if (x < rect.left) {
-            x = 0;
-        } else if (x > rect.right) {
-            x = width;
-        } else {
-            x = x - (int) rect.left;
-        }
-        return 0xff - (x * 0xff / width);
-    }
-
-
     @Override
     public boolean onTrackballEvent(MotionEvent event) {
         float x = event.getX();
@@ -451,25 +342,11 @@ public class ColorPickerView extends View {
                     mHue = hue;
                     update = true;
                     break;
-                case PANEL_ALPHA:
-                    if (!mShowAlphaPanel || mAlphaRect == null) {
-                        update = false;
-                    } else {
-                        int alpha = (int) (mAlpha - x * 10);
-                        if (alpha < 0) {
-                            alpha = 0;
-                        } else if (alpha > 0xff) {
-                            alpha = 0xff;
-                        }
-                        mAlpha = alpha;
-                        update = true;
-                    }
-                    break;
             }
         }
         if (update) {
             if (mListener != null) {
-                mListener.onColorChanged(Color.HSVToColor(mAlpha, new float[]{mHue, mSat, mVal}));
+                mListener.onColorChanged(Color.HSVToColor(new float[]{mHue, mSat, mVal}));
             }
             invalidate();
             return true;
@@ -495,7 +372,7 @@ public class ColorPickerView extends View {
         }
         if (update) {
             if (mListener != null) {
-                mListener.onColorChanged(Color.HSVToColor(mAlpha, new float[]{mHue, mSat, mVal}));
+                mListener.onColorChanged(Color.HSVToColor(new float[]{mHue, mSat, mVal}));
             }
             invalidate();
             return true;
@@ -518,10 +395,6 @@ public class ColorPickerView extends View {
             mSat = result[0];
             mVal = result[1];
             update = true;
-        } else if (mAlphaRect != null && mAlphaRect.contains(startX, startY)) {
-            mLastTouchedPanel = PANEL_ALPHA;
-            mAlpha = pointToAlpha((int) event.getX());
-            update = true;
         }
         return update;
     }
@@ -536,23 +409,13 @@ public class ColorPickerView extends View {
         int heightAllowed = MeasureSpec.getSize(heightMeasureSpec);
         widthAllowed = chooseWidth(widthMode, widthAllowed);
         heightAllowed = chooseHeight(heightMode, heightAllowed);
-        if (!mShowAlphaPanel) {
-            height = (int) (widthAllowed - PANEL_SPACING - HUE_PANEL_WIDTH);
-            //当根据宽度按计算出来宽度大于可允许的高度时
-            if (height > heightAllowed || getTag().equals("landscape")) {
-                height = heightAllowed;
-                width = (int) (height + PANEL_SPACING + HUE_PANEL_WIDTH);
-            } else {
-                width = widthAllowed;
-            }
+        height = (int) (widthAllowed - PANEL_SPACING - HUE_PANEL_WIDTH);
+        //当根据宽度按计算出来宽度大于可允许的高度时
+        if (height > heightAllowed || getTag().equals("landscape")) {
+            height = heightAllowed;
+            width = (int) (height + PANEL_SPACING + HUE_PANEL_WIDTH);
         } else {
-            width = (int) (heightAllowed - ALPHA_PANEL_HEIGHT + HUE_PANEL_WIDTH);
-            if (width > widthAllowed) {
-                width = widthAllowed;
-                height = (int) (widthAllowed - HUE_PANEL_WIDTH + ALPHA_PANEL_HEIGHT);
-            } else {
-                height = heightAllowed;
-            }
+            width = widthAllowed;
         }
         setMeasuredDimension(width, height);
     }
@@ -574,19 +437,11 @@ public class ColorPickerView extends View {
     }
 
     private int getPrefferedWidth() {
-        int width = getPrefferedHeight();
-        if (mShowAlphaPanel) {
-            width -= (PANEL_SPACING + ALPHA_PANEL_HEIGHT);
-        }
-        return (int) (width + HUE_PANEL_WIDTH + PANEL_SPACING);
+        return (int) (getPrefferedHeight() + HUE_PANEL_WIDTH + PANEL_SPACING);
     }
 
     private int getPrefferedHeight() {
-        int height = (int) (200 * mDensity);
-        if (mShowAlphaPanel) {
-            height += PANEL_SPACING + ALPHA_PANEL_HEIGHT;
-        }
-        return height;
+        return (int) (200 * mDensity);
     }
 
     @Override
@@ -601,15 +456,12 @@ public class ColorPickerView extends View {
 
         setUpSatValRect();
         setUpHueRect();
-        setUpAlphaRect();
+//        setUpAlphaRect();
     }
 
     private void setUpSatValRect() {
         final RectF dRect = mDrawingRect;
         float panelSide = dRect.height() - BORDER_WIDTH_PX * 2;
-        if (mShowAlphaPanel) {
-            panelSide -= PANEL_SPACING + ALPHA_PANEL_HEIGHT;
-        }
         float left = dRect.left + BORDER_WIDTH_PX;
         float top = dRect.top + BORDER_WIDTH_PX;
         float bottom = top + panelSide;
@@ -621,28 +473,10 @@ public class ColorPickerView extends View {
         final RectF dRect = mDrawingRect;
         float left = dRect.right - HUE_PANEL_WIDTH + BORDER_WIDTH_PX;
         float top = dRect.top + BORDER_WIDTH_PX;
-        float bottom = dRect.bottom - BORDER_WIDTH_PX - (mShowAlphaPanel ? (PANEL_SPACING + ALPHA_PANEL_HEIGHT) : 0);
+        float bottom = dRect.bottom - BORDER_WIDTH_PX;
         float right = dRect.right - BORDER_WIDTH_PX;
         mHueRect = new RectF(left, top, right, bottom);
     }
-
-    private void setUpAlphaRect() {
-        if (!mShowAlphaPanel) return;
-        final RectF dRect = mDrawingRect;
-        float left = dRect.left + BORDER_WIDTH_PX;
-        float top = dRect.bottom - ALPHA_PANEL_HEIGHT + BORDER_WIDTH_PX;
-        float bottom = dRect.bottom - BORDER_WIDTH_PX;
-        float right = dRect.right - BORDER_WIDTH_PX;
-        mAlphaRect = new RectF(left, top, right, bottom);
-        mAlphaPattern = new AlphaPatternDrawable((int) (5 * mDensity));
-        mAlphaPattern.setBounds(
-                Math.round(mAlphaRect.left),
-                Math.round(mAlphaRect.top),
-                Math.round(mAlphaRect.right),
-                Math.round(mAlphaRect.bottom)
-        );
-    }
-
 
     /**
      * 设置颜色改变监听器
@@ -678,7 +512,7 @@ public class ColorPickerView extends View {
      * @return 当前颜色
      */
     public int getColor() {
-        return Color.HSVToColor(mAlpha, new float[]{mHue, mSat, mVal});
+        return Color.HSVToColor(new float[]{mHue, mSat, mVal});
     }
 
     /**
@@ -697,15 +531,13 @@ public class ColorPickerView extends View {
      * @param callback 是否触发OnColorChangedListener
      */
     public void setColor(int color, boolean callback) {
-        int alpha = Color.alpha(color);
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
-        mAlpha = alpha;
         mHue = hsv[0];
         mSat = hsv[1];
         mVal = hsv[2];
         if (callback && mListener != null) {
-            mListener.onColorChanged(Color.HSVToColor(mAlpha, new float[]{mHue, mSat, mVal}));
+            mListener.onColorChanged(Color.HSVToColor(new float[]{mHue, mSat, mVal}));
         }
         invalidate();
     }
@@ -719,29 +551,6 @@ public class ColorPickerView extends View {
         return mDrawingOffset;
     }
 
-    /**
-     * 使透明度的设置条是否可见
-     *
-     * @param visible 是否可见
-     */
-    public void setAlphaSliderVisible(boolean visible) {
-
-        if (mShowAlphaPanel != visible) {
-            mShowAlphaPanel = visible;
-            //强制重置所有着色器，不然在改变尺寸后它们运行起来不正确
-            mValShader = null;
-            mSatShader = null;
-            mHueShader = null;
-            mAlphaShader = null;
-            requestLayout();
-        }
-
-    }
-
-    public boolean getAlphaSliderVisible() {
-        return mShowAlphaPanel;
-    }
-
     public void setSliderTrackerColor(int color) {
         mSliderTrackerColor = color;
         mHueTrackerPaint.setColor(mSliderTrackerColor);
@@ -750,34 +559,5 @@ public class ColorPickerView extends View {
 
     public int getSliderTrackerColor() {
         return mSliderTrackerColor;
-    }
-
-    /**
-     * 设置在透明度滚动条上的文字
-     *
-     * @param res 字符串的resId
-     */
-    public void setAlphaSliderText(int res) {
-        String text = getContext().getString(res);
-        setAlphaSliderText(text);
-    }
-
-    /**
-     * 设置在透明度滚动条上的文字
-     *
-     * @param text 字符串
-     */
-    public void setAlphaSliderText(String text) {
-        mAlphaSliderText = text;
-        invalidate();
-    }
-
-    /**
-     * 获取在透明度滚动条上的文字
-     *
-     * @return 透明度滚动条上的文字
-     */
-    public String getAlphaSliderText() {
-        return mAlphaSliderText;
     }
 }
