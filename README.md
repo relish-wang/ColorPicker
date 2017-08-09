@@ -3,5 +3,4 @@
 
 ## TODO
 - README.md
-- remove ColorPickerPanelView
 - upload to jcenter

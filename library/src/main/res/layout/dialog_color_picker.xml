@@ -47,7 +47,7 @@
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
-        <wang.relish.colorpicker.ColorPickerPanelView
+        <View
             android:id="@+id/old_color_panel"
             android:layout_width="0px"
             android:layout_height="fill_parent"
@@ -62,7 +62,7 @@
             android:text="→"
             android:textSize="20sp" />
 
-        <wang.relish.colorpicker.ColorPickerPanelView
+        <View
             android:id="@+id/new_color_panel"
             android:layout_width="0px"
             android:layout_height="wrap_content"

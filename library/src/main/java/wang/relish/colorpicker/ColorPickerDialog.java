@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.InputFilter;
@@ -33,8 +34,8 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
 
     private ColorPickerView mColorPicker;
 
-    private ColorPickerPanelView mOldColor;
-    private ColorPickerPanelView mNewColor;
+    private View mOldColor;
+    private View mNewColor;
 
     private EditText mHexVal;
     private boolean mHexValueEnabled = false;
@@ -111,13 +112,13 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
         mOldColor.setOnClickListener(this);
         mNewColor.setOnClickListener(this);
         mColorPicker.setOnColorChangedListener(this);
-        mOldColor.setColor(color);
+        mOldColor.setBackgroundColor(color);
         mColorPicker.setColor(color, true);
     }
 
     @Override
     public void onColorChanged(int color) {
-        mNewColor.setColor(color);
+        mNewColor.setBackgroundColor(color);
         if (mHexValueEnabled) updateHexValue(color);
         if (mListener != null) mListener.onColorChanged(color);
     }
@@ -162,7 +163,8 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     public void onClick(View v) {
         if (v.getId() == R.id.new_color_panel) {
             if (mListener != null) {
-                mListener.onColorChanged(mNewColor.getColor());
+                mNewColor.getDrawingCacheBackgroundColor();
+                mListener.onColorChanged(((ColorDrawable) mNewColor.getBackground()).getColor());
             }
         }
         dismiss();
@@ -172,15 +174,15 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     @Override
     public Bundle onSaveInstanceState() {
         Bundle state = super.onSaveInstanceState();
-        state.putInt("old_color", mOldColor.getColor());
-        state.putInt("new_color", mNewColor.getColor());
+        state.putInt("old_color", ((ColorDrawable) mOldColor.getBackground()).getColor());
+        state.putInt("new_color", ((ColorDrawable) mNewColor.getBackground()).getColor());
         return state;
     }
 
     @Override
     public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mOldColor.setColor(savedInstanceState.getInt("old_color"));
+        mOldColor.setBackgroundColor(savedInstanceState.getInt("old_color"));
         mColorPicker.setColor(savedInstanceState.getInt("new_color"), true);
     }
 }
