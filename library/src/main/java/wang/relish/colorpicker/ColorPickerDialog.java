@@ -47,7 +47,7 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
         void onColorChanged(int color);
     }
 
-    public ColorPickerDialog(Context context, int initialColor) {
+    private ColorPickerDialog(Context context, int initialColor) {
         super(context);
         init(initialColor);
     }
@@ -184,5 +184,35 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
         super.onRestoreInstanceState(savedInstanceState);
         mOldColor.setBackgroundColor(savedInstanceState.getInt("old_color"));
         mColorPicker.setColor(savedInstanceState.getInt("new_color"), true);
+    }
+
+    public static class Builder {
+        private Context context;
+        private int initColor;
+        private boolean hexValueEnabled;
+        private OnColorChangedListener listener;
+
+        public Builder(Context context, int initColor) {
+            this.context = context;
+            this.initColor = initColor;
+            this.hexValueEnabled = false;
+        }
+
+        public Builder setHexValueEnabled(boolean hexValueEnabled) {
+            this.hexValueEnabled = hexValueEnabled;
+            return this;
+        }
+
+        public Builder setOnColorChangedListener(OnColorChangedListener listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        public ColorPickerDialog build() {
+            ColorPickerDialog dialog = new ColorPickerDialog(context, initColor);
+            dialog.setHexValueEnabled(hexValueEnabled);
+            dialog.setOnColorChangedListener(listener);
+            return dialog;
+        }
     }
 }

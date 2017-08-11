@@ -49,10 +49,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.view_color:
-                ColorPickerDialog dialog = new ColorPickerDialog(MainActivity.this, mColor);
-                dialog.setHexValueEnabled(mHexValueEnable);
-                dialog.setOnColorChangedListener(MainActivity.this);
-                dialog.show();
+                new ColorPickerDialog.Builder(MainActivity.this, mColor)
+                        .setHexValueEnabled(mHexValueEnable)//是否显示颜色值
+                        .setOnColorChangedListener(MainActivity.this)//设置颜色改变监听器
+                        .build()
+                        .show();//展示
                 break;
         }
     }
