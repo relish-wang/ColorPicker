@@ -56,7 +56,7 @@ new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
  
 解决方法：
 
-在app的build.gradle文件末尾添加一下代码
+在app的build.gradle文件末尾添加以下代码
 
 ```
 configurations.all {
