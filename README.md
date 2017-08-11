@@ -15,6 +15,17 @@ ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
 ### 使用gradle加载依赖
 
+#### 1 在project的build.gradle中的`allprojects`节点的`repositories`节点中添加`maven { url 'https://jitpack.io' }`
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+#### 2 在你的moudle的build.gradle的依赖中添加
 ```groovy
 compile 'wang.relish.widgets:colorpicker:0.0.1-SNAPSHOT'
 ```
@@ -27,22 +38,16 @@ compile 'wang.relish.widgets:colorpicker:0.0.1-SNAPSHOT'
 
 ### 启动选择弹窗
 ```
-ColorPickerDialog.Builder builder = new ColorPickerDialog.Builder(MainActivity.this, mColor);//mColor:初始颜色
-builder.setHexValueEnabled(mHexValueEnable)//是否显示颜色值
-        .setOnColorChangedListener(new ColorPickerDialog.OnColorChangedListener() {//设置监听颜色改变的监听器
-            @Override
-            public void onColorChanged(int color) {
-                mColor = color;
-                mViewColor.setBackgroundColor(mColor);
-            }
-        })
+new ColorPickerDialog.Builder(MainActivity.this, mColor)   //mColor:初始颜色
+        .setHexValueEnabled(mHexValueEnable)               //是否显示颜色值
+        .setOnColorChangedListener(onColorChangedListener) //设置监听颜色改变的监听器
         .build()
         .show();//展示
 ```
 
 ## 注意事项
 
-- 要求API Level 14以上
+- 要求API Level 15以上
 
 
 ## 混淆配置
