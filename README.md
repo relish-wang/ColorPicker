@@ -24,9 +24,9 @@ allprojects {
 }
 ```
 
-#### 2 在你moudle的build.gradle中
+#### 2 在你app的build.gradle中
 ```groovy
-compile 'com.github.relish-wang:ColorPicker:0.0.1-SNAPSHOT'
+compile 'com.github.relish-wang:ColorPicker:0.0.2-SNAPSHOT'
 ```
 
 ### 更新历史
@@ -47,6 +47,29 @@ new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
 ## 注意事项
 
 - 要求API Level 15以上
+
+## 常见问题
+
+#### Manifest文件合并问题
+
+> Manifest merger failed : Attribute meta-data#android.support.VERSION@value value=(25.3.1) ...
+ 
+解决方法：
+
+在app的build.gradle文件末尾添加一下代码
+
+```
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '25.3.0'
+            }
+        }
+    }
+}
+```
 
 
 ## 混淆配置
