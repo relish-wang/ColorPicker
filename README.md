@@ -15,8 +15,8 @@ ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
 ### 使用gradle加载依赖
 
-#### 1 在project的build.gradle中的`allprojects`节点的`repositories`节点中添加`maven { url 'https://jitpack.io' }`
-```
+#### 1 在project的build.gradle中
+```groovy
 allprojects {
     repositories {
         ...
@@ -25,9 +25,9 @@ allprojects {
 }
 ```
 
-#### 2 在你的moudle的build.gradle的依赖中添加
+#### 2 在你moudle的build.gradle中
 ```groovy
-compile 'wang.relish.widgets:colorpicker:0.0.1-SNAPSHOT'
+compile 'com.github.relish-wang:ColorPicker:0.0.1-SNAPSHOT'
 ```
 
 ### 更新历史
