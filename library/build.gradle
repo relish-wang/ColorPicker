@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 //启用Jitpack 插件
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = GROUP_ID
+group = 'com.github.relish-wang'
 
 android {
     compileSdkVersion 26

@@ -5,6 +5,8 @@
 [TOC]
 ## 简介
 
+[![badge](https://jitpack.io/v/relish-wang/ColorPicker.svg)](https://jitpack.io/#relish-wang/ColorPicker)
+
 ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
 ![主界面](./image/image.png)!
