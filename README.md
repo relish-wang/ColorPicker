@@ -9,7 +9,7 @@
 
 ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
-![主界面](./image/image.png)!
+![主界面](./image/colorpicker.gif)!
 
 ## 引用方法
 
@@ -19,7 +19,6 @@ ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 ```groovy
 allprojects {
     repositories {
-        ...
         maven { url 'https://jitpack.io' }
     }
 }
@@ -38,7 +37,7 @@ compile 'com.github.relish-wang:ColorPicker:0.0.1-SNAPSHOT'
 
 ### 启动选择弹窗
 ```
-new ColorPickerDialog.Builder(MainActivity.this, mColor)   //mColor:初始颜色
+new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
         .setHexValueEnabled(mHexValueEnable)               //是否显示颜色值
         .setOnColorChangedListener(onColorChangedListener) //设置监听颜色改变的监听器
         .build()
