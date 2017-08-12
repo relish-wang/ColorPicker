@@ -22,7 +22,7 @@ import android.view.View;
  * @author Relish Wang
  * @since 2017/08/02
  */
-public class ColorPickerView extends View {
+class ColorPickerView extends View {
 
     private final static int PANEL_SAT_VAL = 0;
     private final static int PANEL_HUE = 1;
@@ -89,7 +89,7 @@ public class ColorPickerView extends View {
 
     private Point mStartTouchPoint = null;
 
-    public interface OnColorChangedListener {
+    interface OnColorChangedListener {
         void onColorChanged(int color);
     }
 
