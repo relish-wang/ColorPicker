@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
-            android:text="启用16进制：" />
+            android:text="显示颜色数值：" />
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/st_hex_enable"
