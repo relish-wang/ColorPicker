@@ -1,13 +1,16 @@
 package wang.relish.colorpicker.sample;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -22,5 +25,12 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("wang.relish.colorpicker.sample", appContext.getPackageName());
+    }
+
+    @Test
+    public void color() {
+        float[] hsv = new float[]{0, 0, 0};
+        Color.colorToHSV(0xffffff, hsv);
+        System.out.println(Arrays.toString(hsv));
     }
 }

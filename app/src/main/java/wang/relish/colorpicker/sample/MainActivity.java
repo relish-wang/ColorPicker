@@ -1,6 +1,5 @@
 package wang.relish.colorpicker.sample;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -15,7 +14,7 @@ import wang.relish.colorpicker.ColorPickerDialog;
  * @since 2017/7/31
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
-        ColorPickerDialog.OnColorChangedListener, CompoundButton.OnCheckedChangeListener {
+        ColorPickerDialog.OnColorPickedListener, CompoundButton.OnCheckedChangeListener {
 
 
     private View mViewColor;
@@ -24,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 选择的颜色
      */
-    private int mColor = Color.parseColor("#FFFFFF");
+    private int mColor = 0xFFFFFF;
     /**
      * 是否显示颜色数值（16进制）
      */
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onColorChanged(int color) {
+    public void onColorPicked(int color) {
         mColor = color;
         mViewColor.setBackgroundColor(mColor);
     }

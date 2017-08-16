@@ -12,82 +12,128 @@ import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Shader.TileMode;
+import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * 取色器
+ * <p>
+ * 所有注释单位为dp的全局变量，初始都是dp值，在使用之前会乘上屏幕像素(mDensity)称为px值
  *
  * @author Relish Wang
  * @since 2017/08/02
  */
 class ColorPickerView extends View {
 
-    private final static int PANEL_SAT_VAL = 0;
-    private final static int PANEL_HUE = 1;
+    @IntDef({PANEL.SAT_VAL, PANEL.HUE})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface PANEL {
+        int SAT_VAL = 0;
+        int HUE = 1;
+    }
 
     /**
-     * 用于显示颜色的面板的边框粗细（单位：px）
+     * 显示H、SV的矩形的边框粗细（单位：dp）
      */
-    private final static float BORDER_WIDTH_PX = 1;
-
+    private final static float BORDER_WIDTH = 1;
     /**
-     * 色调面板的宽度（单位：dp）
+     * H矩形的宽度（单位：dp）
      */
-    private float HUE_PANEL_WIDTH = 30f;
+    private float mHuePanelWidth = 30f;
     /**
-     * 不同颜色面板间的间距（单位：dp）
+     * H、SV矩形间的间距（单位：dp）
      */
-    private float PANEL_SPACING = 10f;
+    private float mPanelSpacing = 10f;
     /**
-     * 颜色选择面板的半径（单位：dp）
+     * 当mode为MeasureSpec.UNSPECIFIED时的首选高度（单位：dp）
      */
-    private float PALETTE_CIRCLE_TRACKER_RADIUS = 5f;
+    private float mPreferredHeight = 200;
     /**
-     * 色调或透明值面板的padding（单位：dp）
+     * 当mode为MeasureSpec.UNSPECIFIED时的首选宽度（单位：dp）
      */
-    private float RECTANGLE_TRACKER_OFFSET = 2f;
-
+    private float mPreferredWidth = mPreferredHeight + mHuePanelWidth + mPanelSpacing;
+    /**
+     * SV指示器的半径（单位：dp）
+     */
+    private float mSVTrackerRadius = 5f;
+    /**
+     * H、SV矩形与父布局的边距（单位：dp）
+     */
+    private float mRectOffset = 2f;
+    /**
+     * 屏幕密度
+     */
     private float mDensity = 1f;
-
-    private OnColorChangedListener mListener;
-
+    /**
+     * 绘制SV的画笔
+     */
     private Paint mSatValPaint;
+    /**
+     * 绘制SV指示器的画笔
+     */
     private Paint mSatValTrackerPaint;
-
+    /**
+     * 绘制H的画笔
+     */
     private Paint mHuePaint;
+    /**
+     * 绘制H指示器的画笔
+     */
     private Paint mHueTrackerPaint;
-
+    /**
+     * 绘制H、SV矩形的边线的画笔
+     */
     private Paint mBorderPaint;
 
-    private Shader mValShader;
-    private Shader mSatShader;
+    //H、V着色器
     private Shader mHueShader;
+    private Shader mValShader;
 
+    //HSV的默认值
     private float mHue = 360f;
     private float mSat = 0f;
     private float mVal = 0f;
 
+    /**
+     * 用于显示被选择H的位置的指示器的颜色
+     */
     private int mSliderTrackerColor = 0xff1c1c1c;
+    /**
+     * H、SV矩形的边框颜色
+     */
     private int mBorderColor = 0xff6E6E6E;
-
     /**
      * 记录上一次被点击的颜色板
      */
-    private int mLastTouchedPanel = PANEL_SAT_VAL;
-
+    @PANEL
+    private int mLastTouchedPanel = PANEL.SAT_VAL;
     /**
      * 边距
      */
     private float mDrawingOffset;
-
+    /**
+     * H指示器
+     */
     private RectF mDrawingRect;
-
+    /**
+     * 用于选择SV的矩形
+     */
     private RectF mSatValRect;
+    /**
+     * 用于选择H的矩形
+     */
     private RectF mHueRect;
-
+    /**
+     * SV指示器
+     */
     private Point mStartTouchPoint = null;
+
+    private OnColorChangedListener mListener;
 
     interface OnColorChangedListener {
         void onColorChanged(int color);
@@ -107,29 +153,42 @@ class ColorPickerView extends View {
     }
 
     private void init() {
-        mDensity = getContext().getResources().getDisplayMetrics().density;//获取屏幕密度并初始化三区域各项参数
-        PALETTE_CIRCLE_TRACKER_RADIUS *= mDensity;
-        RECTANGLE_TRACKER_OFFSET *= mDensity;
-        HUE_PANEL_WIDTH *= mDensity;
-        PANEL_SPACING = PANEL_SPACING * mDensity;
+        mDensity = getContext().getResources().getDisplayMetrics().density;//获取屏幕密度
+        mSVTrackerRadius *= mDensity;//灰度饱和度指示器的半径
+        mRectOffset *= mDensity;//H、SV矩形与父布局的边距
+        mHuePanelWidth *= mDensity;//H矩形的宽度
+        mPanelSpacing *= mDensity;//H、SV矩形间的间距
+        mPreferredHeight *= mDensity;//当mode为MeasureSpec.UNSPECIFIED时的首选高度
+        mPreferredWidth *= mDensity;//当mode为MeasureSpec.UNSPECIFIED时的首选宽度
 
         mDrawingOffset = calculateRequiredOffset();//计算所需位移
 
-        initPaintTools();//初始化绘制三区域的画笔
+        initPaintTools();//初始化画笔、画布
 
-        //Needed for receiving trackball motion events. 设置焦点
-        setFocusable(true);
-        setFocusableInTouchMode(true);
+        setFocusable(true);//设置可获取焦点
+        setFocusableInTouchMode(true);//设置在被触摸时会获取焦点
+    }
+
+    /**
+     * mSVTrackerRadius、
+     * mRectOffset、
+     * BORDER_WIDTH * mDensity
+     * 三者的最大值的1.5倍
+     *
+     * @return 边距
+     */
+    private float calculateRequiredOffset() {
+        float offset = Math.max(mSVTrackerRadius, mRectOffset);
+        offset = Math.max(offset, BORDER_WIDTH * mDensity);
+        return offset * 1.5f;
     }
 
     private void initPaintTools() {
-
         mSatValPaint = new Paint();
         mSatValTrackerPaint = new Paint();
         mHuePaint = new Paint();
         mHueTrackerPaint = new Paint();
         mBorderPaint = new Paint();
-
 
         mSatValTrackerPaint.setStyle(Style.STROKE);
         mSatValTrackerPaint.setStrokeWidth(2f * mDensity);
@@ -141,108 +200,133 @@ class ColorPickerView extends View {
         mHueTrackerPaint.setAntiAlias(true);
     }
 
-    private float calculateRequiredOffset() {
-        float offset = Math.max(PALETTE_CIRCLE_TRACKER_RADIUS, RECTANGLE_TRACKER_OFFSET);
-        offset = Math.max(offset, BORDER_WIDTH_PX * mDensity);
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthAllowed = MeasureSpec.getSize(widthMeasureSpec);
+        int heightAllowed = MeasureSpec.getSize(heightMeasureSpec);
 
-        return offset * 1.5f;
-    }
+        widthAllowed = isUnspecified(widthMode) ? (int) mPreferredWidth : widthAllowed;
+        heightAllowed = isUnspecified(heightMode) ? (int) mPreferredHeight : heightAllowed;
 
-    private int[] buildHueColorArray() {
-
-        int[] hue = new int[361];
-
-        int count = 0;
-        for (int i = hue.length - 1; i >= 0; i--, count++) {
-            hue[count] = Color.HSVToColor(new float[]{i, 1f, 1f});
+        int width = widthAllowed;
+        int height = (int) (widthAllowed - mPanelSpacing - mHuePanelWidth);
+        //当根据宽度计算出来的高度大于可允许的最大高度时 或 当前是横屏
+        if (height > heightAllowed || "landscape".equals(getTag())) {
+            height = heightAllowed;
+            width = (int) (height + mPanelSpacing + mHuePanelWidth);
         }
-
-        return hue;
+        setMeasuredDimension(width, height);
     }
 
+    private static boolean isUnspecified(int mode) {
+        return !(mode == MeasureSpec.EXACTLY || mode == MeasureSpec.AT_MOST);
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         if (mDrawingRect.width() <= 0 || mDrawingRect.height() <= 0) return;
-
-        drawSatValPanel(canvas);//绘制饱和度选择区域
-        drawHuePanel(canvas);//绘制右侧色相选择区域
+        drawSatValPanel(canvas);//绘制SV选择区域
+        drawHuePanel(canvas);//绘制右侧H选择区域
     }
 
     /**
-     * 绘制饱和度选择区域
+     * 绘制S、V选择区域（矩形）
      *
-     * @param canvas
+     * @param canvas 画布
      */
     private void drawSatValPanel(Canvas canvas) {
-
-        final RectF rect = mSatValRect;
-
+        //描边（先画一个大矩形, 再在内部画一个小矩形，就可以显示出描边的效果）
         mBorderPaint.setColor(mBorderColor);
-        canvas.drawRect(mDrawingRect.left, mDrawingRect.top, rect.right + BORDER_WIDTH_PX, rect.bottom + BORDER_WIDTH_PX, mBorderPaint);
-        //明度线性渲染器
+        canvas.drawRect(
+                mDrawingRect.left,
+                mDrawingRect.top,
+                mSatValRect.right + BORDER_WIDTH,
+                mSatValRect.bottom + BORDER_WIDTH,
+                mBorderPaint);
+
+        //组合着色器 = 明度线性着色器 + 饱和度线性着色器
+        ComposeShader mShader = generateSVShader();
+        mSatValPaint.setShader(mShader);
+        canvas.drawRect(mSatValRect, mSatValPaint);
+
+        //初始化选择器的位置
+        Point p = satValToPoint(mSat, mVal);
+        //绘制显示SV值的选择器
+        mSatValTrackerPaint.setColor(0xff000000);
+        canvas.drawCircle(p.x, p.y, mSVTrackerRadius - 1f * mDensity, mSatValTrackerPaint);
+        //绘制外圆
+        mSatValTrackerPaint.setColor(0xffdddddd);
+        canvas.drawCircle(p.x, p.y, mSVTrackerRadius, mSatValTrackerPaint);
+    }
+
+    /**
+     * 创建SV着色器(明度线性着色器 + 饱和度线性着色器)
+     *
+     * @return 着色器
+     */
+    private ComposeShader generateSVShader() {
+        //明度线性着色器
         if (mValShader == null) {
-            mValShader = new LinearGradient(rect.left, rect.top, rect.left, rect.bottom,
+            mValShader = new LinearGradient(mSatValRect.left, mSatValRect.top, mSatValRect.left, mSatValRect.bottom,
                     0xffffffff, 0xff000000, TileMode.CLAMP);
         }
         //HSV转化为RGB
         int rgb = Color.HSVToColor(new float[]{mHue, 1f, 1f});
-        //饱和线性渲染器
-        mSatShader = new LinearGradient(rect.left, rect.top, rect.right, rect.top,
+        //饱和线性着色器
+        Shader satShader = new LinearGradient(mSatValRect.left, mSatValRect.top, mSatValRect.right, mSatValRect.top,
                 0xffffffff, rgb, TileMode.CLAMP);
-        //组合渲染 = 明度线性渲染器 + 饱和线性渲染器
-        ComposeShader mShader = new ComposeShader(mValShader, mSatShader, PorterDuff.Mode.MULTIPLY);
-        mSatValPaint.setShader(mShader);
-
-        canvas.drawRect(rect, mSatValPaint);
-        //初始化选择圆块的位置
-        Point p = satValToPoint(mSat, mVal);
-        //绘制黑色内圆
-        mSatValTrackerPaint.setColor(0xff000000);
-        canvas.drawCircle(p.x, p.y, PALETTE_CIRCLE_TRACKER_RADIUS - 1f * mDensity, mSatValTrackerPaint);
-        //绘制外圆
-        mSatValTrackerPaint.setColor(0xffdddddd);
-        canvas.drawCircle(p.x, p.y, PALETTE_CIRCLE_TRACKER_RADIUS, mSatValTrackerPaint);
-
+        //组合着色器 = 明度线性着色器 + 饱和度线性着色器
+        return new ComposeShader(mValShader, satShader, PorterDuff.Mode.MULTIPLY);
     }
 
     /**
-     * 绘制右侧色相选择区域
+     * 绘制右侧H选择区域
      *
      * @param canvas 画布
      */
     private void drawHuePanel(Canvas canvas) {
-
         final RectF rect = mHueRect;
 
         mBorderPaint.setColor(mBorderColor);
-        canvas.drawRect(rect.left - BORDER_WIDTH_PX,
-                rect.top - BORDER_WIDTH_PX,
-                rect.right + BORDER_WIDTH_PX,
-                rect.bottom + BORDER_WIDTH_PX,
+        canvas.drawRect(rect.left - BORDER_WIDTH,
+                rect.top - BORDER_WIDTH,
+                rect.right + BORDER_WIDTH,
+                rect.bottom + BORDER_WIDTH,
                 mBorderPaint);
-        //初始化色相线性渲染器
+        //初始化H线性着色器
         if (mHueShader == null) {
-            mHueShader = new LinearGradient(rect.left, rect.top, rect.left, rect.bottom, buildHueColorArray(), null, TileMode.CLAMP);
+            int[] hue = new int[361];
+            int count = 0;
+            for (int i = hue.length - 1; i >= 0; i--, count++) {
+                hue[count] = Color.HSVToColor(new float[]{i, 1f, 1f});
+            }
+            mHueShader = new LinearGradient(
+                    rect.left,
+                    rect.top,
+                    rect.left,
+                    rect.bottom,
+                    hue,
+                    null,
+                    TileMode.CLAMP);
             mHuePaint.setShader(mHueShader);
         }
 
         canvas.drawRect(rect, mHuePaint);
 
         float rectHeight = 4 * mDensity / 2;
-        //初始化色相选择器选择条位置
+        //初始化H选择器选择条位置
         Point p = hueToPoint(mHue);
 
         RectF r = new RectF();
-        r.left = rect.left - RECTANGLE_TRACKER_OFFSET;
-        r.right = rect.right + RECTANGLE_TRACKER_OFFSET;
+        r.left = rect.left - mRectOffset;
+        r.right = rect.right + mRectOffset;
         r.top = p.y - rectHeight;
         r.bottom = p.y + rectHeight;
 
         //绘制选择条
         canvas.drawRoundRect(r, 2, 2, mHueTrackerPaint);
-
     }
 
     private Point hueToPoint(float hue) {
@@ -256,13 +340,12 @@ class ColorPickerView extends View {
     }
 
     private Point satValToPoint(float sat, float val) {
-        final RectF rect = mSatValRect;
-        final float height = rect.height();
-        final float width = rect.width();
+        final float height = mSatValRect.height();
+        final float width = mSatValRect.width();
 
         Point p = new Point();
-        p.x = (int) (sat * width + rect.left);
-        p.y = (int) ((1f - val) * height + rect.top);
+        p.x = (int) (sat * width + mSatValRect.left);
+        p.y = (int) ((1f - val) * height + mSatValRect.top);
         return p;
     }
 
@@ -314,7 +397,7 @@ class ColorPickerView extends View {
         boolean update = false;
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             switch (mLastTouchedPanel) {
-                case PANEL_SAT_VAL:
+                case PANEL.SAT_VAL:
                     float sat, val;
                     sat = mSat + x / 50f;
                     val = mVal - y / 50f;
@@ -332,7 +415,7 @@ class ColorPickerView extends View {
                     mVal = val;
                     update = true;
                     break;
-                case PANEL_HUE:
+                case PANEL.HUE:
                     float hue = mHue - y * 10f;
                     if (hue < 0f) {
                         hue = 0f;
@@ -386,11 +469,11 @@ class ColorPickerView extends View {
         int startX = mStartTouchPoint.x;
         int startY = mStartTouchPoint.y;
         if (mHueRect.contains(startX, startY)) {
-            mLastTouchedPanel = PANEL_HUE;
+            mLastTouchedPanel = PANEL.HUE;
             mHue = pointToHue(event.getY());
             update = true;
         } else if (mSatValRect.contains(startX, startY)) {
-            mLastTouchedPanel = PANEL_SAT_VAL;
+            mLastTouchedPanel = PANEL.SAT_VAL;
             float[] result = pointToSatVal(event.getX(), event.getY());
             mSat = result[0];
             mVal = result[1];
@@ -399,71 +482,25 @@ class ColorPickerView extends View {
         return update;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width;
-        int height;
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int widthAllowed = MeasureSpec.getSize(widthMeasureSpec);
-        int heightAllowed = MeasureSpec.getSize(heightMeasureSpec);
-        widthAllowed = chooseWidth(widthMode, widthAllowed);
-        heightAllowed = chooseHeight(heightMode, heightAllowed);
-        height = (int) (widthAllowed - PANEL_SPACING - HUE_PANEL_WIDTH);
-        //当根据宽度按计算出来宽度大于可允许的高度时
-        if (height > heightAllowed || getTag().equals("landscape")) {
-            height = heightAllowed;
-            width = (int) (height + PANEL_SPACING + HUE_PANEL_WIDTH);
-        } else {
-            width = widthAllowed;
-        }
-        setMeasuredDimension(width, height);
-    }
-
-    private int chooseWidth(int mode, int size) {
-        if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) {
-            return size;
-        } else { // (mode == MeasureSpec.UNSPECIFIED)
-            return getPrefferedWidth();
-        }
-    }
-
-    private int chooseHeight(int mode, int size) {
-        if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) {
-            return size;
-        } else { // (mode == MeasureSpec.UNSPECIFIED)
-            return getPrefferedHeight();
-        }
-    }
-
-    private int getPrefferedWidth() {
-        return (int) (getPrefferedHeight() + HUE_PANEL_WIDTH + PANEL_SPACING);
-    }
-
-    private int getPrefferedHeight() {
-        return (int) (200 * mDensity);
-    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
         mDrawingRect = new RectF();
         mDrawingRect.left = mDrawingOffset + getPaddingLeft();
         mDrawingRect.right = w - mDrawingOffset - getPaddingRight();
         mDrawingRect.top = mDrawingOffset + getPaddingTop();
         mDrawingRect.bottom = h - mDrawingOffset - getPaddingBottom();
-
+        //当DatePickerView的长宽改变时，重新计算SV、H矩形大小
         setUpSatValRect();
         setUpHueRect();
-//        setUpAlphaRect();
     }
 
     private void setUpSatValRect() {
         final RectF dRect = mDrawingRect;
-        float panelSide = dRect.height() - BORDER_WIDTH_PX * 2;
-        float left = dRect.left + BORDER_WIDTH_PX;
-        float top = dRect.top + BORDER_WIDTH_PX;
+        float panelSide = dRect.height() - BORDER_WIDTH * 2;
+        float left = dRect.left + BORDER_WIDTH;
+        float top = dRect.top + BORDER_WIDTH;
         float bottom = top + panelSide;
         float right = left + panelSide;
         mSatValRect = new RectF(left, top, right, bottom);
@@ -471,10 +508,10 @@ class ColorPickerView extends View {
 
     private void setUpHueRect() {
         final RectF dRect = mDrawingRect;
-        float left = dRect.right - HUE_PANEL_WIDTH + BORDER_WIDTH_PX;
-        float top = dRect.top + BORDER_WIDTH_PX;
-        float bottom = dRect.bottom - BORDER_WIDTH_PX;
-        float right = dRect.right - BORDER_WIDTH_PX;
+        float left = dRect.right - mHuePanelWidth + BORDER_WIDTH;
+        float top = dRect.top + BORDER_WIDTH;
+        float bottom = dRect.bottom - BORDER_WIDTH;
+        float right = dRect.right - BORDER_WIDTH;
         mHueRect = new RectF(left, top, right, bottom);
     }
 
@@ -543,7 +580,7 @@ class ColorPickerView extends View {
     }
 
     /**
-     * color picker的padding
+     * ColorPickerView的padding
      *
      * @return padding（单位：px）
      */

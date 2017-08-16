@@ -41,10 +41,10 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     private boolean mHexValueEnabled = false;
     private ColorStateList mHexDefaultTextColor;
 
-    private OnColorChangedListener mListener;
+    private OnColorPickedListener mListener;
 
-    public interface OnColorChangedListener {
-        void onColorChanged(int color);
+    public interface OnColorPickedListener {
+        void onColorPicked(int color);
     }
 
     private ColorPickerDialog(Context context, int initialColor) {
@@ -120,7 +120,6 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     public void onColorChanged(int color) {
         mNewColor.setBackgroundColor(color);
         if (mHexValueEnabled) updateHexValue(color);
-        if (mListener != null) mListener.onColorChanged(color);
     }
 
     public void setHexValueEnabled(boolean enable) {
@@ -151,7 +150,7 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
      *
      * @param listener 颜色改变监听器
      */
-    public void setOnColorChangedListener(OnColorChangedListener listener) {
+    public void setOnColorChangedListener(OnColorPickedListener listener) {
         mListener = listener;
     }
 
@@ -164,7 +163,7 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
         if (v.getId() == R.id.new_color_panel) {
             if (mListener != null) {
                 mNewColor.getDrawingCacheBackgroundColor();
-                mListener.onColorChanged(((ColorDrawable) mNewColor.getBackground()).getColor());
+                mListener.onColorPicked(((ColorDrawable) mNewColor.getBackground()).getColor());
             }
         }
         dismiss();
@@ -190,7 +189,7 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
         private Context context;
         private int initColor;
         private boolean hexValueEnabled;
-        private OnColorChangedListener listener;
+        private OnColorPickedListener listener;
 
         public Builder(Context context, int initColor) {
             this.context = context;
@@ -203,7 +202,7 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
             return this;
         }
 
-        public Builder setOnColorChangedListener(OnColorChangedListener listener) {
+        public Builder setOnColorChangedListener(OnColorPickedListener listener) {
             this.listener = listener;
             return this;
         }
