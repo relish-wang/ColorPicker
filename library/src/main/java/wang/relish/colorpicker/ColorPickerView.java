@@ -62,6 +62,10 @@ class ColorPickerView extends View {
      */
     private float mSVTrackerRadius = 5f;
     /**
+     * SV指示器的半径（单位：dp）
+     */
+    private float mHTrackerHeight = 4f;
+    /**
      * H、SV矩形与父布局的边距（单位：dp）
      */
     private float mRectOffset = 2f;
@@ -155,6 +159,7 @@ class ColorPickerView extends View {
     private void init() {
         mDensity = getContext().getResources().getDisplayMetrics().density;//获取屏幕密度
         mSVTrackerRadius *= mDensity;//灰度饱和度指示器的半径
+        mHTrackerHeight *= mDensity;//色相指示器高度
         mRectOffset *= mDensity;//H、SV矩形与父布局的边距
         mHuePanelWidth *= mDensity;//H矩形的宽度
         mPanelSpacing *= mDensity;//H、SV矩形间的间距
@@ -173,7 +178,8 @@ class ColorPickerView extends View {
      * mSVTrackerRadius、
      * mRectOffset、
      * BORDER_WIDTH * mDensity
-     * 三者的最大值的1.5倍
+     * 三者的最大值
+     * 的1.5倍
      *
      * @return 边距
      */
@@ -315,19 +321,19 @@ class ColorPickerView extends View {
 
         canvas.drawRect(rect, mHuePaint);
 
-        float rectHeight = 4 * mDensity / 2;
+        float halfHTrackerHeight = mHTrackerHeight / 2;
         //初始化H选择器选择条位置
         Point p = hueToPoint(mHue);
 
         RectF r = new RectF();
         r.left = rect.left - mRectOffset;
         r.right = rect.right + mRectOffset;
-        r.top = p.y - rectHeight;
-        r.bottom = p.y + rectHeight;
+        r.top = p.y - halfHTrackerHeight;
+        r.bottom = p.y + halfHTrackerHeight;
 
         //绘制选择条
         canvas.drawRoundRect(r, 2, 2, mHueTrackerPaint);
-    }
+}
 
     private Point hueToPoint(float hue) {
         final RectF rect = mHueRect;
