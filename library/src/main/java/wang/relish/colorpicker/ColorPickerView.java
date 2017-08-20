@@ -333,7 +333,7 @@ class ColorPickerView extends View {
 
         //绘制选择条
         canvas.drawRoundRect(r, 2, 2, mHueTrackerPaint);
-}
+    }
 
     private Point hueToPoint(float hue) {
         final RectF rect = mHueRect;
@@ -399,8 +399,7 @@ class ColorPickerView extends View {
     public boolean onTrackballEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-
-        boolean update = false;
+        boolean isUpdated = false;
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             switch (mLastTouchedPanel) {
                 case PANEL.SAT_VAL:
@@ -419,7 +418,7 @@ class ColorPickerView extends View {
                     }
                     mSat = sat;
                     mVal = val;
-                    update = true;
+                    isUpdated = true;
                     break;
                 case PANEL.HUE:
                     float hue = mHue - y * 10f;
@@ -429,11 +428,11 @@ class ColorPickerView extends View {
                         hue = 360f;
                     }
                     mHue = hue;
-                    update = true;
+                    isUpdated = true;
                     break;
             }
         }
-        if (update) {
+        if (isUpdated) {
             if (mListener != null) {
                 mListener.onColorChanged(Color.HSVToColor(new float[]{mHue, mSat, mVal}));
             }
@@ -445,21 +444,21 @@ class ColorPickerView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean update = false;
+        boolean isUpdated = false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mStartTouchPoint = new Point((int) event.getX(), (int) event.getY());
-                update = moveTrackersIfNeeded(event);
+                isUpdated = moveTrackersIfNeeded(event);
                 break;
             case MotionEvent.ACTION_MOVE:
-                update = moveTrackersIfNeeded(event);
+                isUpdated = moveTrackersIfNeeded(event);
                 break;
             case MotionEvent.ACTION_UP:
                 mStartTouchPoint = null;
-                update = moveTrackersIfNeeded(event);
+                isUpdated = moveTrackersIfNeeded(event);
                 break;
         }
-        if (update) {
+        if (isUpdated) {
             if (mListener != null) {
                 mListener.onColorChanged(Color.HSVToColor(new float[]{mHue, mSat, mVal}));
             }
