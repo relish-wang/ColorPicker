@@ -109,8 +109,12 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
                 Math.round(mColorPicker.getDrawingOffset()),
                 0
         );
-        mOldColor.setOnClickListener(this);
-        mNewColor.setOnClickListener(this);
+
+        View mBtnCancel = layout.findViewById(R.id.tv_cancel);
+        View mBtnConfirm = layout.findViewById(R.id.tv_confirm);
+        mBtnCancel.setOnClickListener(this);
+        mBtnConfirm.setOnClickListener(this);
+
         mColorPicker.setOnColorChangedListener(this);
         mOldColor.setBackgroundColor(color);
         mColorPicker.setColor(color, true);
@@ -160,9 +164,8 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.new_color_panel) {
+        if (v.getId() == R.id.tv_confirm) {
             if (mListener != null) {
-                mNewColor.getDrawingCacheBackgroundColor();
                 mListener.onColorPicked(((ColorDrawable) mNewColor.getBackground()).getColor());
             }
         }
