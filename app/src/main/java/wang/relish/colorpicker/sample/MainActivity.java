@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.view_color:
                 new ColorPickerDialog.Builder(MainActivity.this, mColor)
                         .setHexValueEnabled(mHexValueEnable)//是否显示颜色值
-                        .setOnColorChangedListener(MainActivity.this)//设置颜色改变监听器
+                        .setOnColorPickedListener(MainActivity.this)//设置颜色改变监听器
                         .build()
                         .show();//展示
                 break;

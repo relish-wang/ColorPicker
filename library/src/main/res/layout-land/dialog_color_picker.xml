@@ -19,7 +19,8 @@
             android:tag="landscape" />
 
         <LinearLayout
-            android:layout_width="100dp"
+            android:id="@+id/preview_layout"
+            android:layout_width="112dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="12dp"
@@ -38,15 +39,33 @@
                 android:layout_height="42dp"
                 android:layout_weight="1" />
 
-            <EditText
-                android:id="@+id/hex_val"
+            <LinearLayout
+                android:id="@+id/hex_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="当前颜色"
-                android:imeOptions="actionDone"
-                android:inputType="textCapCharacters"
-                android:maxLength="7" />
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:text="#"
+                    android:textSize="24sp" />
+
+                <EditText
+                    android:id="@+id/et_hex"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="当前颜色"
+                    android:imeOptions="actionDone"
+                    android:inputType="textCapCharacters"
+                    android:maxLength="7" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_confirm"

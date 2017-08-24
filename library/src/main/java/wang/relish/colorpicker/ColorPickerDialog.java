@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,11 +13,9 @@ import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -30,18 +27,20 @@ import java.util.Locale;
  * @since 2017/08/02
  */
 public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColorChangedListener,
-        View.OnClickListener {
+        View.OnClickListener, TextView.OnEditorActionListener {
 
     private ColorPickerView mColorPicker;
 
     private View mOldColor;
     private View mNewColor;
 
-    private EditText mHexVal;
+    private View mHexLayout;
+    private EditText mEtHex;
     private boolean mHexValueEnabled = false;
     private ColorStateList mHexDefaultTextColor;
 
     private OnColorPickedListener mListener;
+
 
     public interface OnColorPickedListener {
         void onColorPicked(int color);
@@ -49,66 +48,28 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
 
     private ColorPickerDialog(Context context, int initialColor) {
         super(context);
-        init(initialColor);
-    }
-
-    /**
-     * 设置初始颜色
-     *
-     * @param color 初始颜色
-     */
-    private void init(int color) {
-        Window window = getWindow();
-        if (window != null) {
-            window.setFormat(PixelFormat.RGBA_8888);
-        }
-        setUp(color);
+        setUp(initialColor);
     }
 
     private void setUp(int color) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View layout = inflater.inflate(R.layout.dialog_color_picker, null);
         setContentView(layout);
-        setTitle("取色器");
 
         mColorPicker = layout.findViewById(R.id.color_picker_view);
         mOldColor = layout.findViewById(R.id.old_color_panel);
         mNewColor = layout.findViewById(R.id.new_color_panel);
 
-        mHexVal = layout.findViewById(R.id.hex_val);
-        mHexVal.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        mHexDefaultTextColor = mHexVal.getTextColors();
+        mHexLayout = layout.findViewById(R.id.hex_layout);
+        mEtHex = layout.findViewById(R.id.et_hex);
+        mEtHex.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        mHexDefaultTextColor = mEtHex.getTextColors();
 
-        mHexVal.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        //当点击软键盘上的【完成】按钮时触发监听
+        mEtHex.setOnEditorActionListener(this);
 
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    String hexVal = mHexVal.getText().toString();
-                    if (hexVal.length() > 5 || hexVal.length() < 10) {
-                        try {
-                            int c = Utils.convertToColorInt(hexVal);
-                            mColorPicker.setColor(c, true);
-                            mHexVal.setTextColor(mHexDefaultTextColor);
-                        } catch (IllegalArgumentException e) {
-                            mHexVal.setTextColor(Color.RED);
-                        }
-                    } else {
-                        mHexVal.setTextColor(Color.RED);
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
-        ((LinearLayout) mOldColor.getParent()).setPadding(
-                Math.round(mColorPicker.getDrawingOffset()),
-                0,
-                Math.round(mColorPicker.getDrawingOffset()),
-                0
-        );
+        int padding = Math.round(mColorPicker.getDrawingOffset());
+        layout.findViewById(R.id.preview_layout).setPadding(padding, 0, padding, 0);
 
         View mBtnCancel = layout.findViewById(R.id.tv_cancel);
         View mBtnConfirm = layout.findViewById(R.id.tv_confirm);
@@ -116,8 +77,30 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
         mBtnConfirm.setOnClickListener(this);
 
         mColorPicker.setOnColorChangedListener(this);
-        mOldColor.setBackgroundColor(color);
-        mColorPicker.setColor(color, true);
+        mOldColor.setBackgroundColor(color); // 颜色预览色板上显示旧颜色
+        mColorPicker.setColor(color, true); // 为ColorPickerView设置初始颜色
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            String hexVal = mEtHex.getText().toString();
+            if (hexVal.length() >= 0 || hexVal.length() < 7) {
+                try {
+                    int c = Utils.convertToColorInt(hexVal);
+                    mColorPicker.setColor(c, true);
+                    mEtHex.setTextColor(mHexDefaultTextColor);
+                } catch (IllegalArgumentException e) {
+                    mEtHex.setTextColor(Color.RED);
+                }
+            } else {
+                mEtHex.setTextColor(Color.RED);
+            }
+            return true;
+    }
+        return false;
     }
 
     @Override
@@ -129,11 +112,11 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     public void setHexValueEnabled(boolean enable) {
         mHexValueEnabled = enable;
         if (enable) {
-            mHexVal.setVisibility(View.VISIBLE);
+            mHexLayout.setVisibility(View.VISIBLE);
             updateHexLengthFilter();
             updateHexValue(getColor());
         } else
-            mHexVal.setVisibility(View.GONE);
+            mHexLayout.setVisibility(View.GONE);
     }
 
     public boolean getHexValueEnabled() {
@@ -141,12 +124,12 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
     }
 
     private void updateHexLengthFilter() {
-        mHexVal.setFilters(new InputFilter[]{new InputFilter.LengthFilter(7)});
+        mEtHex.setFilters(new InputFilter[]{new InputFilter.LengthFilter(7)});
     }
 
     private void updateHexValue(int color) {
-        mHexVal.setText(Utils.convertToRGB(color).toUpperCase(Locale.getDefault()));
-        mHexVal.setTextColor(mHexDefaultTextColor);
+        mEtHex.setText(Utils.convertToRGB(color).toUpperCase(Locale.getDefault()));
+        mEtHex.setTextColor(mHexDefaultTextColor);
     }
 
     /**
@@ -205,7 +188,7 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
             return this;
         }
 
-        public Builder setOnColorChangedListener(OnColorPickedListener listener) {
+        public Builder setOnColorPickedListener(OnColorPickedListener listener) {
             this.listener = listener;
             return this;
         }

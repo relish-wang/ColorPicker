@@ -9,23 +9,8 @@ import android.support.annotation.NonNull;
  */
 class Utils {
 
-
     /**
-     * 16进制颜色 转 ARGB(String)类型颜色
-     *
-     * @param color 16进制颜色
-     * @return ARGB颜色
-     */
-    static String convertToARGB(int color) {
-        String rgb = convertToRGB(color);
-        String alpha = Integer.toHexString(Color.alpha(color));
-        if (alpha.length() == 1) alpha = "0" + alpha;
-        return "#" + alpha + rgb.replace("#", "");
-    }
-
-
-    /**
-     * 16进制颜色 转 RGB(String)类型颜色
+     * 16进制颜色 转 RGB(String)类型颜色(无#号)
      *
      * @param color 16进制颜色
      * @return RGB颜色(无透明度值)
@@ -37,7 +22,7 @@ class Utils {
         if (red.length() == 1) red = "0" + red;
         if (green.length() == 1) green = "0" + green;
         if (blue.length() == 1) blue = "0" + blue;
-        return "#" + red + green + blue;
+        return red + green + blue;
     }
 
     /**
@@ -48,11 +33,28 @@ class Utils {
      * @throws NumberFormatException 当{@param argb}不是一个正确的颜色格式的字符串时
      */
     static int convertToColorInt(@NonNull String argb) throws IllegalArgumentException {
-        if (!argb.startsWith("#")) {
-            argb = "#" + argb;
+        if (argb.matches("[0-9a-fA-F]{1,6}")) {
+            switch (argb.length()) {
+                case 1:
+                    return Color.parseColor("#00000" + argb);
+                case 2:
+                    return Color.parseColor("#0000" + argb);
+                case 3:
+                    char r = argb.charAt(0), g = argb.charAt(1), b = argb.charAt(2);
+                    //noinspection StringBufferReplaceableByString
+                    return Color.parseColor(new StringBuilder("#")
+                            .append(r).append(r)
+                            .append(g).append(g)
+                            .append(b).append(b)
+                            .toString());
+                case 4:
+                    return Color.parseColor("#00" + argb);
+                case 5:
+                    return Color.parseColor("#0" + argb);
+                case 6:
+                    return Color.parseColor("#" + argb);
+            }
         }
-        if (argb.matches("#[0-9a-fA-F]{6}") || argb.matches("#[0-9a-fA-F]{8}"))
-            return Color.parseColor(argb);
         throw new IllegalArgumentException(argb + " is not a valid color.");
     }
 }

@@ -24,6 +24,7 @@
 
 
         <LinearLayout
+            android:id="@+id/preview_layout"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_margin="0dp"
@@ -44,20 +45,39 @@
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/hex_val"
+        <LinearLayout
+            android:id="@+id/hex_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:hint="当前颜色"
-            android:imeOptions="actionDone"
-            android:inputType="textCapCharacters"
-            android:maxLength="7"
-            android:maxLines="1" />
+            android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="#"
+                android:textSize="24sp" />
+
+            <EditText
+                android:id="@+id/et_hex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="2dp"
+                android:background="@android:drawable/edit_text"
+                android:gravity="center"
+                android:hint="当前颜色"
+                android:imeOptions="actionDone"
+                android:inputType="textCapCharacters"
+                android:maxLength="7"
+                android:maxLines="1" />
+        </LinearLayout>
     </LinearLayout>
 
     <View
