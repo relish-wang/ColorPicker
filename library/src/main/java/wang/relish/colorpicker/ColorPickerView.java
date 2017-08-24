@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author Relish Wang
  * @since 2017/08/02
  */
-class ColorPickerView extends View {
+public class ColorPickerView extends View {
 
     @IntDef({PANEL.SAT_VAL, PANEL.HUE})
     @Retention(RetentionPolicy.SOURCE)
