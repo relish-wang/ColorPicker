@@ -1,13 +1,18 @@
 language: android
-
+jdk: oraclejdk8
 sudo: false
+
+env:
+  global:
+    - COMPILE_SDK_VERSION = 26
+    - BUILD_TOOLS_VERSION = 26.0.1
 
 android:
   components:
-    - build-tools-26.0.0
-    - android-26
-    - extra-android-m2repository
-    - extra-android-support
+    - platform-tools
+    - tools
+    - build-tools-$BUILD_TOOLS_VERSION
+    - android-$COMPILE_SDK_VERSION
 
   licenses:
     - android-sdk-license-.+
@@ -17,4 +22,4 @@ android:
     email: false
 
 script:
-  - "./gradlew build connectedCheck"
+  - ./gradlew build connectedCheck
