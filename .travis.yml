@@ -6,7 +6,6 @@ env:
   global:
   - COMPILE_SDK_VERSION = 25
   - BUILD_TOOLS_VERSION = 25.0.3
-  - ANDROID_HOME = ~/Library/Android/sdk/
 android:
   components:
   - platform-tools
@@ -24,7 +23,7 @@ android:
 notifications:
   email: false
 before_install:
-- openssl aes-256-cbc -K $encrypted_98d43dcabc21_key -iv $encrypted_98d43dcabc21_iv
+  - openssl aes-256-cbc -K $encrypted_98d43dcabc21_key -iv $encrypted_98d43dcabc21_iv
   -in keystore.jks.enc -out keystore.jks -d
 
 before_script:
