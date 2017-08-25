@@ -20,4 +20,4 @@ script:
 - ./gradlew build connectedCheck
 before_install:
 - openssl aes-256-cbc -K $encrypted_98d43dcabc21_key -iv $encrypted_98d43dcabc21_iv
-  -in keystore.jks.enc -out sign/keystore.jks -d
+  -in keystore.jks.enc -out keystore.jks -d
