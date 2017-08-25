@@ -13,10 +13,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("/sign/keystore.jks")
-            storePassword "colorpicker"
-            keyAlias "colorpicker"
-            keyPassword "colorpicker"
+            storeFile file("/keystore.jks")
+            storePassword KEYSTORE_PASS
+            keyAlias ALIAS_NAME
+            keyPassword ALIAS_PASS
             v2SigningEnabled true
         }
     }
