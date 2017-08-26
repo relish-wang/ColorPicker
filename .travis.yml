@@ -32,3 +32,11 @@ before_script:
 
 script:
   - ./gradlew build connectedCheck
+deploy:
+  provider: releases
+  user: "relish.wang@gmail.com"
+  password: "qytadwx8023"
+  file: app/build/outputs/apk/app-release.apk
+  skip_cleanup: true
+  on:
+    tags: true
