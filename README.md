@@ -9,7 +9,7 @@
 
 ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
-![主界面](./image/colorpicker.gif)!
+![主界面](./image/colorpicker.gif)
 
 ## 引用方法
 
@@ -46,7 +46,7 @@ new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
 
 ## 注意事项
 
-- 要求API Level 15以上
+- 要求API Level 14及以上
 
 ## 常见问题
 
