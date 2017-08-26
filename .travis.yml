@@ -29,7 +29,7 @@ script:
   - ./gradlew build connectedCheck
 deploy:
   provider: releases
-  api_key: c7dd6f3ae32a4d7b3c9cc0051d26a174e083901f
+  api_key: $GH_TOKEN
   file: app/build/outputs/apk/app-release.apk
   skip_cleanup: true
   on:
