@@ -25,17 +25,11 @@ notifications:
 before_install:
   - openssl aes-256-cbc -K $encrypted_98d43dcabc21_key -iv $encrypted_98d43dcabc21_iv
   -in keystore.jks.enc -out keystore.jks -d
-
-before_script:
-  - mkdir -p "$ANDROID_HOME/licenses"
-  - cp ./android-licenses/ "$ANDROID_HOME/licenses/"
-
 script:
   - ./gradlew build connectedCheck
 deploy:
   provider: releases
-  user: "relish.wang@gmail.com"
-  password: "qytadwx8023"
+  api_key: c7dd6f3ae32a4d7b3c9cc0051d26a174e083901f
   file: app/build/outputs/apk/app-release.apk
   skip_cleanup: true
   on:
