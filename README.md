@@ -5,8 +5,9 @@
 [TOC]
 ## 简介
 
-![badge](https://jitpack.io/v/relish-wang/ColorPicker.svg)
-![badge](https://travis-ci.org/relish-wang/ColorPicker.svg?branch=master)
+![version](https://jitpack.io/v/relish-wang/ColorPicker.svg)
+![api-level](https://android-arsenal.com/api?level=14)
+![travis-ci](https://travis-ci.org/relish-wang/ColorPicker)
 
 ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
