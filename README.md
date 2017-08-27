@@ -36,8 +36,8 @@ compile 'com.github.relish-wang:ColorPicker:0.0.2-SNAPSHOT'
 ## 使用方法
 
 ### 启动选择弹窗
-```
-new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
+```java
+new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
         .setHexValueEnabled(mHexValueEnable)               //是否显示颜色值
         .setOnColorChangedListener(onColorChangedListener) //设置监听颜色改变的监听器
         .build()
