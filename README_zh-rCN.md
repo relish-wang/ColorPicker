@@ -1,23 +1,23 @@
 # ColorPicker
 
-Author: WangXin
+作者：王鑫
 
-[**中文文档**](README_zh-rCN.md)
+[**English Document**](README.md)
 
 [TOC]
-## Brief Introduction
+## 简介
 
 [![jitpack][jitpack-version]][jitpack] [![api][apisvg]][api] [![build][buildsvg]][build]
 
-ColorPicker is A imitation color picker just like Photoshop's for Android that based on HSV color space.
+ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
 ![主界面](./image/colorpicker.gif)
 
-## How to start
+## 引用方法
 
-### Add dependency in gradle
+### 使用gradle加载依赖
 
-#### 1 In the build.gradle of project
+#### 1 在project的build.gradle中
 ```groovy
 allprojects {
     repositories {
@@ -26,41 +26,41 @@ allprojects {
 }
 ```
 
-#### 2 In the build.gradle of app
+#### 2 在你app的build.gradle中
 ```groovy
 compile 'com.github.relish-wang:ColorPicker:0.0.2-SNAPSHOT'
 ```
 
-### Log of version change
+### 更新历史
 
 [**CHANGELOG.md**](CHANGELOG.md)
 
-## How to use
+## 使用方法
 
-### launch a color picker
+### 启动选择弹窗
 ```java
-new ColorPickerDialog.Builder(context, mColor)   //mColor:init color
-        .setHexValueEnabled(mHexValueEnable)               //whether show the color value(Hexadecimal) or not
-        .setOnColorChangedListener(onColorChangedListener) //set a listener for listening color changing
+new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
+        .setHexValueEnabled(mHexValueEnable)               //是否显示颜色值
+        .setOnColorChangedListener(onColorChangedListener) //设置监听颜色改变的监听器
         .build()
-        .show();//show
+        .show();//展示
 ```
 
-## attention
+## 注意事项
 
-- API Level 14+
+- 要求API Level 14及以上
 
-## Q&A
+## 常见问题
 
-#### while Manifest files merging
+#### Manifest文件合并问题
 
 > Manifest merger failed : Attribute meta-data#android.support.VERSION@value value=(25.3.1) ...
  
-attention：
+解决方法：
 
-add code below at the end of the build.gradle of app
-   
-   ```
+在app的build.gradle文件末尾添加以下代码
+
+```
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         def requested = details.requested
@@ -74,9 +74,9 @@ configurations.all {
 ```
 
 
-## Proguard Configuration
+## 混淆配置
 
-Nothing.
+无
 
 [jitpack-version]: https://jitpack.io/v/relish-wang/ColorPicker.svg
 [jitpack]: https://jitpack.io/v/relish-wang/ColorPicker
