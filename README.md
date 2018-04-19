@@ -1,4 +1,4 @@
-# ColorPicker
+## <img src="./images/colorpicker_logo.png" alt="ColorPicker" width="80" height="80" align="bottom"/>ColorPicker
 
 Author: WangXin
 
@@ -39,9 +39,9 @@ compile 'com.github.relish-wang:ColorPicker:0.0.2-SNAPSHOT'
 
 ### launch a color picker
 ```java
-new ColorPickerDialog.Builder(context, mColor)   //mColor:init color
-        .setHexValueEnabled(mHexValueEnable)               //whether show the color value(Hexadecimal) or not
-        .setOnColorChangedListener(onColorChangedListener) //set a listener for listening color changing
+new ColorPickerDialog.Builder(context, mColor)              //mColor:init color
+        .setHexValueEnabled(mHexValueEnable)                //whether show the color value(Hexadecimal) or not
+        .setOnColorChangedListener(onColorChangedListener)  //set a listener for listening color changing
         .build()
         .show();//show
 ```
