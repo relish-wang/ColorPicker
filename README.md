@@ -1,4 +1,4 @@
-## <img src="./images/colorpicker_logo.png" alt="ColorPicker" width="80" height="80" align="bottom"/>ColorPicker
+## <img src="./image/colorpicker_logo.png" alt="ColorPicker" width="80" height="80" align="bottom"/>ColorPicker
 
 Author: WangXin
 

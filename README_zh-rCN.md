@@ -1,4 +1,4 @@
-# ColorPicker
+## <img src="./image/colorpicker_logo.png" alt="ColorPicker" width="80" height="80" align="bottom"/>ColorPicker
 
 作者：王鑫
 
