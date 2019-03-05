@@ -1,6 +1,6 @@
 ## <img src="./image/colorpicker_logo.png" alt="ColorPicker" width="80" height="80" align="bottom"/>ColorPicker
 
-作者：王鑫
+作者：景三
 
 [**English Document**](README.md)
 
