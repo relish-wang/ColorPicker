@@ -46,6 +46,24 @@ new ColorPickerDialog.Builder(context, mColor)   //mColor:初始颜色
         .show();//展示
 ```
 
+### 或者
+
+或者你可以直接把library下的关键文件拷走使用
+- [ColorPickerDialog.java](https://github.com/relish-wang/ColorPicker/blob/master/library/src/main/java/wang/relish/colorpicker/ColorPickerDialog.java)
+- [ColorPickerView.java](https://github.com/relish-wang/ColorPicker/blob/master/library/src/main/java/wang/relish/colorpicker/ColorPickerView.java)
+- [Utils.java](https://github.com/relish-wang/ColorPicker/blob/master/library/src/main/java/wang/relish/colorpicker/Utils.java)
+- [layout/dialog_color_picker.xml](https://github.com/relish-wang/ColorPicker/blob/master/library/src/main/res/layout/dialog_color_picker.xml)
+- [layout-land/dialog_color_picker.xml](https://github.com/relish-wang/ColorPicker/blob/master/library/src/main/res/layout-land/dialog_color_picker.xml)
+
+放置到你项目的对应文件夹即可。
+注意：
+*记得把dialog_color_picker.xml布局文件中ColorPickerView的包名改为你自己的包名*
+
+### 再或者
+
+直接下载了此仓库的源码，再将library作为一个module导入你的工程
+
+
 ## 注意事项
 
 - 要求API Level 14及以上
