@@ -13,12 +13,10 @@ import wang.relish.colorpicker.ColorPickerDialog;
  * @author Relish Wang
  * @since 2017/7/31
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,
-        ColorPickerDialog.OnColorPickedListener, CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends AppCompatActivity {
 
 
     private View mViewColor;
-    private SwitchCompat mStHexEnable;
 
     /**
      * 选择的颜色
@@ -34,37 +32,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStHexEnable = (SwitchCompat) findViewById(R.id.st_hex_enable);
+        SwitchCompat mStHexEnable = (SwitchCompat) findViewById(R.id.st_hex_enable);
 
         mStHexEnable.setChecked(mHexValueEnable);
 
-        mStHexEnable.setOnCheckedChangeListener(this);
+        mStHexEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mHexValueEnable = b;
+            }
+        });
 
         mViewColor = findViewById(R.id.view_color);
-        mViewColor.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.view_color:
+        mViewColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 new ColorPickerDialog.Builder(MainActivity.this, mColor)
                         .setHexValueEnabled(mHexValueEnable)//是否显示颜色值
-                        .setOnColorPickedListener(MainActivity.this)//设置颜色改变监听器
+                        //设置点击应用颜色的事件监听
+                        .setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
+                            @Override
+                            public void onColorPicked(int color) {
+                                mColor = color;
+                                mViewColor.setBackgroundColor(mColor);
+                            }
+                        })
                         .build()
                         .show();//展示
-                break;
-        }
-    }
-
-    @Override
-    public void onColorPicked(int color) {
-        mColor = color;
-        mViewColor.setBackgroundColor(mColor);
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton v, boolean b) {
-        mHexValueEnable = b;
+            }
+        });
     }
 }
