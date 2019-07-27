@@ -23,7 +23,6 @@ allprojects {
     repositories {
         // maven { url 'https://jitpack.io' } // for old versions(0.x.x)
         jcenter() // for new versions(1.x.x)
-        // maven { url 'https://dl.bintray.com/relish-wang/maven/' } // 等待审核中可以使用此仓库, 审核通过后直接使用jcenter即可
     }
 }
 ```

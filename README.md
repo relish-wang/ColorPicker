@@ -21,9 +21,8 @@ ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 ```groovy
 allprojects {
     repositories {
-        // maven { url 'https://jitpack.io' } // 0.0.x
+        // maven { url 'https://jitpack.io' } // 0.0.x 老版本发布在jitpack上(建议使用新版本)
         jcenter() // 1.x.x 支持AndroidX
-        // maven { url 'https://dl.bintray.com/relish-wang/maven/' } // 等待审核中可以使用此仓库, 审核通过后直接使用jcenter即可
     }
 }
 ```
