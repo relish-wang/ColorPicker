@@ -7,7 +7,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.KeyEvent;
@@ -17,6 +16,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import java.util.Locale;
 
@@ -99,7 +100,7 @@ public class ColorPickerDialog extends Dialog implements ColorPickerView.OnColor
                 mEtHex.setTextColor(Color.RED);
             }
             return true;
-    }
+        }
         return false;
     }
 

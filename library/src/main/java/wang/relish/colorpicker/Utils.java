@@ -1,7 +1,10 @@
 package wang.relish.colorpicker;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
+
+import java.lang.NumberFormatException;
 
 /**
  * @author Relish Wang
