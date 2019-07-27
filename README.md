@@ -7,7 +7,7 @@
 [TOC]
 ## 简介
 
-[![jitpack][jitpack-version]][jitpack] [![api][apisvg]][api] [![build][buildsvg]][build]
+![Download](https://api.bintray.com/packages/relish-wang/maven/colorpicker/images/download.svg) [![api][apisvg]][api] [![build][buildsvg]][build]
 
 ColorPicker是一个仿PhotoShop取色板的颜色拾取组件。
 
@@ -96,9 +96,6 @@ configurations.all {
 ## 混淆配置
 
 无
-
-[jitpack-version]: https://jitpack.io/v/relish-wang/ColorPicker.svg
-[jitpack]: https://jitpack.io/v/relish-wang/ColorPicker
 
 [apisvg]: https://img.shields.io/badge/API-14+-brightgreen.svg
 [api]: https://android-arsenal.com/api?level=14
