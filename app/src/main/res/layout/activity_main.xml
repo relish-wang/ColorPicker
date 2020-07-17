@@ -35,6 +35,12 @@
         </FrameLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/dragonBall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_music_icon" />
 
     <LinearLayout
         android:layout_width="match_parent"
