@@ -1,10 +1,13 @@
 package wang.relish.colorpicker.sample
 
 import android.graphics.*
+import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import wang.relish.colorpicker.ColorPickerDialog
 import java.io.IOException
@@ -48,19 +51,28 @@ class MainActivity : AppCompatActivity() {
                         val startColor = getStartColor(color)
 
                         thread {
-                            val bitmap = imageDownload("https://p3.music.126.net/obj/wo3DlcOGw6DClTvDisK1/3265501725/8ee6/2a6d/a221/2d5ecdf994082f21be31194867c8bc6c.png?imageView")
+                            val bitmap = imageDownload("https://p4.music.126.net/obj/wo3DlcOGw6DClTvDisK1/3265363129/ef9d/da40/a0f0/08c5e5c86c4f722497ae7efed8395fe9.png?imageView")
                                     ?: return@thread
                             val updatedBitmap = handleBitmap(bitmap, startColor, color)
                             dragonBall.post {
                                 dragonBall.setImageBitmap(updatedBitmap)
                             }
-
                         }
+
+                        // dragonBallVector
+                        setVectorDrawable(dragonBallVector, startColor, color)
                     }
                     .build()
                     .show() //展示
             log()
         })
+    }
+
+
+    private fun setVectorDrawable(iv: ImageView, startColor: Int, endColor: Int){
+        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_dragonball) as VectorDrawable
+        iv.setColorFilter(startColor)
+        iv.setImageDrawable(drawable)
     }
 
 
@@ -88,12 +100,13 @@ class MainActivity : AppCompatActivity() {
         val width = originalBitmap.width
         val height = originalBitmap.height
         val updatedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(updatedBitmap)
-        canvas.drawBitmap(originalBitmap, 0F, 0F, null)
-        val paint = Paint()
-        val shader = LinearGradient(0F, 0F, width.toFloat(), 0F, startColor, endColor, Shader.TileMode.CLAMP)
-        paint.shader = shader
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        val canvas = Canvas(updatedBitmap).apply {
+            drawBitmap(originalBitmap, 0F, 0F, null)
+        }
+        val paint = Paint().apply {
+            this.shader = LinearGradient(0F, 0F, width.toFloat(), 0F, startColor, endColor, Shader.TileMode.CLAMP)
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        }
         canvas.drawRect(0F, 0F, width.toFloat(), height.toFloat(), paint)
         return updatedBitmap
     }

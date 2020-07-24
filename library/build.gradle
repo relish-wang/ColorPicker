@@ -26,7 +26,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
-apply from: 'https://raw.githubusercontent.com/relish-wang/script/master/push_to_jcenter.gradle'
+//apply from: 'https://raw.githubusercontent.com/relish-wang/script/master/push_to_jcenter.gradle'
 repositories {
     mavenCentral()
 }
