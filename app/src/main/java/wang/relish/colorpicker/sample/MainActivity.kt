@@ -1,6 +1,8 @@
 package wang.relish.colorpicker.sample
 
+import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.view.View
@@ -8,6 +10,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import wang.relish.colorpicker.ColorPickerDialog
 import java.io.IOException
@@ -66,13 +69,27 @@ class MainActivity : AppCompatActivity() {
                     .show() //展示
             log()
         })
+        text.text =  SpannableBuilder.source(" ")
+                .endToTextEnd()
+                .circle(this, 3, android.R.color.holo_red_light, 3)
+                .append("淦")
+                .get()
     }
 
 
-    private fun setVectorDrawable(iv: ImageView, startColor: Int, endColor: Int){
-        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_dragonball) as VectorDrawable
-        iv.setColorFilter(startColor)
-        iv.setImageDrawable(drawable)
+    private fun setVectorDrawable(iv: ImageView, startColor: Int, endColor: Int) {
+        iv.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_dragonball, startColor, endColor))
+
+    }
+
+
+    fun getBitmapFromVectorDrawable(
+            drawableId: Int,
+            startColor: Int,
+            endColor: Int
+    ): Bitmap {
+        val bitmap = getBitmapFromDrawable(this, drawableId)
+        return handleBitmap(bitmap, startColor, endColor)
     }
 
 
@@ -124,5 +141,22 @@ class MainActivity : AppCompatActivity() {
         val green = Color.green(color)
         val blue = Color.blue(color)
         return Color.argb((255F * 0.7512690813F).toInt(), red, green, blue)
+    }
+
+    companion object {
+        fun getBitmapFromDrawable(context: Context, drawableId: Int): Bitmap {
+            val drawable = ContextCompat.getDrawable(context, drawableId);
+            return if (drawable is BitmapDrawable) {
+                drawable.bitmap
+            } else if (drawable is VectorDrawable || drawable is VectorDrawableCompat) {
+                val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888);
+                val canvas = Canvas(bitmap)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                drawable.draw(canvas)
+                bitmap
+            } else {
+                throw  IllegalArgumentException("unsupported drawable type")
+            }
+        }
     }
 }
