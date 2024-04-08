@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdk 34
     defaultConfig {
         applicationId "wang.relish.colorpicker.sample"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
@@ -26,11 +26,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'wang.relish.colorpicker.sample'
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-//    implementation project(':library')// the colorpicker library
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation project(':library')// the colorpicker library
 
-    implementation 'wang.relish.widget:colorpicker:1.0.0'
+//    implementation 'wang.relish.widget:colorpicker:1.0.0'
 }

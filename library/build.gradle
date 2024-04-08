@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdkVersion 34
     }
     buildTypes {
         release {
@@ -17,10 +17,11 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+    namespace 'wang.relish.colorpicker'
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
 }
 
-apply from: 'https://raw.githubusercontent.com/relish-wang/script/master/push_to_jcenter.gradle'
+//apply from: 'https://raw.githubusercontent.com/relish-wang/script/master/push_to_jcenter.gradle'
